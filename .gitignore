@@ -1,0 +1,9 @@
+*.yml
+*.iso
+*.tar
+Autounattend.xml
+cloudbaseinitsetup.msi
+windowsexporter.msi
+iso_files
+boot
+install

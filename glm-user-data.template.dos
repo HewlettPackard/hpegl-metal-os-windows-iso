@@ -1,0 +1,77 @@
+#cloud-config
+# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+
+# setup SSH keys for Administrator
+# ----------------------------------------------------
+{{- if .SSHKeys }}
+users:
+  - name: GreenLakeAdmin
+    ssh_authorized_keys:
+  {{- range $key := .SSHKeys}}
+      - {{$key }}
+  {{- end}}
+{{end}}
+
+# proxy and ntp info
+# ----------------------------------------------------
+{{- /* extract proxy and ntp info from HostDef struct */}}
+{{- $proxy := "" }}
+{{- $no_proxy := "" }}
+{{- $ntp := ""}}
+{{- range .Connections }}
+  {{- if gt .UntaggedNet.VID 0 }}
+    {{- range .UntaggedNet.Ranges }}
+      {{- if  .Proxy }}
+        {{- $proxy = .Proxy }}
+        {{- $no_proxy = .NoProxy }}
+      {{- end}}
+      {{- if .NTP}}
+        {{- $ntp = .NTP}}
+      {{- end}}
+    {{- end}}
+  {{- end}}
+  {{- range .Networks }}
+    {{- range .Ranges }}
+      {{- if  .Proxy }}
+        {{- $proxy = .Proxy }}
+        {{- $no_proxy = .NoProxy }}
+      {{- end}}
+      {{- if .NTP}}
+        {{- $ntp = .NTP}}
+      {{- end}}
+    {{- end}}
+  {{- end}}
+{{- end}}
+
+{{- if $proxy }}
+write_files:
+  - path: c:\environment
+    permissions: '0644'
+    content: |
+        http_proxy={{$proxy}}
+        https_proxy={{$proxy}}
+        no_proxy={{$no_proxy}}
+        HTTP_PROXY={{$proxy}}
+        HTTPS_PROXY={{$proxy}}
+        NO_PROXY={{$no_proxy}}
+{{- end}}
+
+{{- if $ntp}}
+
+# NTP server information
+# ----------------------------------------------------
+ntp:
+  enabled: true
+  servers:
+  {{- range $ntp}}
+    - {{.}}
+  {{- end}}
+{{- end}}
+
+runcmd:
+  - ['date', '>', 'C:\glm-host-create-time']
+  - ['powershell', '-verb','runas', 'C:\glm-host-create-time']
+
+# Begin GLM Host UserData
+{{ .UserData }}
+# End GLM Host UserData
