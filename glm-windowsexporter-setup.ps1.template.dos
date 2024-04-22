@@ -1,0 +1,39 @@
+# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+
+# taken from https://kimconnect.com/powershell-install-windows-exporter/
+# with local modifications
+$fileName='windowsexporter.msi'
+$stageFolder='C:\downloads\'
+
+# Download the Windows Node Exporter .msi file
+$msiFile=join-path $stageFolder $fileName
+if(!(test-path $stageFolder)){mkdir $stageFolder}
+Unblock-File -Path $msiFile
+
+# Install using MSIEXEC
+msiexec /i $msiFile ENABLED_COLLECTORS=os,cpu,cs,logical_disk,net,tcp,service,textfile LISTEN_PORT=45678 /passive
+
+# Check whether product is installed
+$serviceName='windows_exporter'
+
+function checkUninstall($serviceName){
+    $cpuArchitecture32bitPointerSize=4
+    $path=if ([IntPtr]::Size -eq $cpuArchitecture32bitPointerSize) {
+        'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    }else{
+        @('HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*',
+          'HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*')
+    }
+    Get-ItemProperty $path |.{process{ if ($_.DisplayName -eq $serviceName -and $_.UninstallString) { $_ } }} |
+    Select-Object DisplayName, Publisher, InstallDate, DisplayVersion, UninstallString
+}
+
+do{
+    sleep 5
+    $installed=checkUninstall $serviceName
+}until($null -ne $installed)
+
+# Set auto start and restart upon failures
+$serviceName='windows_exporter'
+& sc.exe failure $serviceName reset= 30 actions= restart/100000/restart/100000/""/300000
+Set-Service -Name $serviceName -StartupType 'Automatic'

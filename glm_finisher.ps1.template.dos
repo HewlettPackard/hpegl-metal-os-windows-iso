@@ -1,0 +1,134 @@
+# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+
+Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+
+mkdir C:\ProgramData\ssh
+
+# SSHKeys {{- .SSHKeys}}
+# New-Item C:\ProgramData\ssh\administrators_authorized_keys
+# This will add ssh keys, and put them into the right place
+{{range $sk := .SSHKeys}}
+Add-Content -Path C:\ProgramData\ssh\administrators_authorized_keys -Value '{{$sk}}'
+{{end}}
+#lock the ssh file with the correct permissions
+icacls.exe "C:\ProgramData\ssh\administrators_authorized_keys" /inheritance:r /grant "Administrators:F" /grant "SYSTEM:F"
+
+# proxy and ntp info
+# ----------------------------------------------------
+{{- /* extract proxy and ntp info from HostDef struct */}}
+{{- $proxy := "" }}
+{{- $no_proxy := "" }}
+{{- $ntp := ""}}
+{{- range .Connections }}
+  {{- if gt .UntaggedNet.VID 0 }}
+    {{- range .UntaggedNet.Ranges }}
+      {{- if  .Proxy }}
+        {{- $proxy = .Proxy }}
+        {{- $no_proxy = .NoProxy }}
+      {{- end}}
+      {{- if .NTP}}
+        {{- $ntp = .NTP}}
+      {{- end}}
+    {{- end}}
+  {{- end}}
+  {{- range .Networks }}
+    {{- range .Ranges }}
+      {{- if  .Proxy }}
+        {{- $proxy = .Proxy }}
+        {{- $no_proxy = .NoProxy }}
+      {{- end}}
+      {{- if .NTP}}
+        {{- $ntp = .NTP}}
+      {{- end}}
+    {{- end}}
+  {{- end}}
+{{- end}}
+# proxy: '{{$proxy}}' no_proxy: '{{$no_proxy}}' ntp: '{{$ntp}}'
+
+
+{{- if $proxy }}
+  {{- if $no_proxy }}
+netsh.exe winhttp set proxy {{ $proxy }} "{{- $no_proxy }}"
+  {{- else }}
+netsh.exe winhttp set proxy {{ $proxy }}
+  {{- end }}
+{{- end}}
+
+# If there is NTP, add it
+{{ if $ntp }}
+net time \\{{- $ntp }} /set
+{{end}}
+
+New-NetFirewallRule -Name "GLM" `
+-DisplayName "GLM" `
+-Description "Allow inbound GLM" `
+-Profile Any `
+-Direction Inbound `
+-Action Allow `
+-Protocol TCP `
+-Program Any `
+-LocalAddress Any `
+-RemoteAddress Any `
+-LocalPort 45678 `
+-RemotePort Any
+
+#should we have a storage array - after everything else is set up
+{{- if .VolumeAttachments }}
+
+# Enable all hardware in MPIO
+New-MSDSMSupportedHW -AllApplicable
+# Also add 3PAR because it wasn't automatic
+New-MSDSMSupportedHW -VendorId 3PARdata -DeviceId VV
+# Enable automatic claim for SAS and iSCSI
+Enable-MSDSMAutomaticClaim -BusType "SAS" -Confirm:$false
+Enable-MSDSMAutomaticClaim -BusType "iSCSI" -Confirm:$false
+
+# First update the initiator name to what the Volume Attachment wants
+$CurrentAddress = (Get-InitiatorPort -ConnectionType iSCSI).NodeAddress
+Set-InitiatorPort -NodeAddress "$CurrentAddress" -NewNodeAddress "{{.InitiatorName}}"
+
+# Wait until we get a good connect from the iSCSI Portal.
+# This is because CloudBase-Init is in a delayed start and we don't have connection to the Storage network at first boot.
+# Delay a max of 5 mins
+{{- if .ISCSIDiscoveryAddress }}
+$count = 0
+do {
+  if ( $count -gt 100 ) { 
+    Write-Warning "iSCSI Portal still not accessible"
+    break
+  }
+  sleep 3
+  $count++
+} until (Test-NetConnection -WarningAction SilentlyContinue -InformationLevel Quiet -ComputerName "{{.ISCSIDiscoveryAddress}}" -Port 3260 )
+{{- end }}
+{{- range $da := .ISCSIDiscoveryAddressesV3}}
+$count = 0
+do {
+  if ( $count -gt 100 ) { 
+    Write-Warning "iSCSI Portal still not accessible"
+    break
+  }
+  sleep 3
+  $count++
+} until (Test-NetConnection -WarningAction SilentlyContinue -InformationLevel Quiet -ComputerName "{{$da}}" -Port 3260 )
+{{- end }}
+
+# Attempt to Discover the Target for all portal addresses
+{{- if .ISCSIDiscoveryAddress }}
+New-IscsiTargetPortal -TargetPortalAddress "{{.ISCSIDiscoveryAddress}}"
+{{- end }}
+{{- range $da := .ISCSIDiscoveryAddressesV3}}
+New-IscsiTargetPortal -TargetPortalAddress "{{$da}}"
+{{- end}}
+# Connect to the target
+{{- if .ISCSIDiscoveryAddress }}
+Connect-IscsiTarget -TargetPortalAddress {{.ISCSIDiscoveryAddress}} -NodeAddress (Get-IscsiTarget).NodeAddress -AuthenticationType ONEWAYCHAP -ChapUsername "{{.CHAPUser}}" -ChapSecret "{{.CHAPSecret}}" -IsPersistent $true -IsMultipathEnabled $true 
+{{- end }}
+{{- range $da := .ISCSIDiscoveryAddressesV3}}
+Connect-IscsiTarget -TargetPortalAddress {{$da}} -NodeAddress (Get-IscsiTarget).NodeAddress -AuthenticationType ONEWAYCHAP -ChapUsername "{{$.CHAPUser}}" -ChapSecret "{{$.CHAPSecret}}" -IsPersistent $true -IsMultipathEnabled $true 
+{{- end }}
+# Target is connected but volume is usually offline, bring all offline volumes online
+Get-Disk | Where-Object { $_.OperationalStatus -eq 'Offline' } | Set-Disk -IsOffline $false
+
+{{- end}}
