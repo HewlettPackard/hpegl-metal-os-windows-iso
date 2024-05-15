@@ -135,6 +135,6 @@ function New-WindowsService {
     )
     $IsoHash = (Get-FileHash -Path "$CurrentPath\$IsoFileName" -Algorithm SHA256).Hash.ToLower()
     $IsoFileSize = (Get-Item "$CurrentPath\$IsoFileName").Length
-    New-ServiceYaml -IsoHash $IsoHash -IsoFileSize $IsoFileSize -IsoFileName $IsoFileName -CurrentPath $CurrentPath -WindowsServerVersion $WindowsServerVersion -IsoUrl $IsoUrl -ServiceName $ServiceName -ServiceDescription $ServiceDescription | Out-File -FilePath "$CurrentPath\Win${WindowsServerVersion}.yml"
+    New-ServiceYaml -IsoHash $IsoHash -IsoFileSize $IsoFileSize -IsoFileName $IsoFileName -CurrentPath $CurrentPath -WindowsServerVersion $WindowsServerVersion -IsoUrl $IsoUrl -ServiceName $ServiceName -ServiceDescription $ServiceDescription | Out-File -Encoding utf8 -FilePath "$CurrentPath\Win${WindowsServerVersion}.yml"
     Remove-Item "Autounattend.xml" -Force
 }

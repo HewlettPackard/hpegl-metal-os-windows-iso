@@ -4,9 +4,9 @@
 
 # Table of contents
 * [Overview](#overview)
-* [Windows Licensing](windows-licensing)
+* [Windows Licensing](#windows-licensing)
 * [Building the Windows image](#building-the-windows-image)
-  * [Setup Golang and other tools](#setup-golang-and-other-tools)
+  * [Setup PowerShell 7 and other tools](#setup-powershell-7-and-other-tools)
   * [Downloading recipe repo from GitHub](#downloading-recipe-repo-from-github)
   * [Downloading a Windows ISO file](#downloading-a-windows-iso-file)
   * [Building the Bare Metal Windows image and service](#building-the-bare-metal-windows-image-and-service)
@@ -61,7 +61,7 @@ These are the high-level steps required to generate the Windows service:
 * Build the Bare Metal Windows image/service
  
 > [!NOTE]
-> * For Windows ADK and PE, please refer to https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-installadd-on. ADK and PE is to assess the quality and performance of systems or components.
+> * For Windows ADK and PE, please refer to https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install. ADK and PE is to assess the quality and performance of systems or components.
 > * For PowerShell 7 or later, please refer to https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4.
 > * For Git, please refer to https://git-scm.com/book/en/v2/Getting-Started-Installing-Git. For more information on it, go to https://gitforwindows.org.
 
