@@ -15,7 +15,7 @@ type: deploy
 svc_category: windows
 svc_flavor: windows
 svc_ver: "${WindowsServerVersion}"
-description: ${ServiceDescription}\n\nThis requires portal version v0.24.116 or later.\n\nIf running on an MR storage controller, the controller requires firmware version 52.26.3 or later.
+description: ${ServiceDescription} This requires portal version v0.24.116 or later. If running on an MR storage controller, the controller requires firmware version 52.26.3 or later.
 timeout: 6000
 approach: vmedia
 assumed_boot: na
