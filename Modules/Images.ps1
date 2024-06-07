@@ -26,13 +26,13 @@ function Mount-Images {
     }
 
     # Boot image should be "Microsoft Windows Setup (amd64)" and not "Microsoft Windows PE (amd64)"
-    if ($null -eq $BootIndex) {
+    if (!$BootIndex) {
         Get-WindowsImage -ImagePath "iso_files\sources\boot.wim" | Format-Table -Property ImageIndex, ImageName | Out-Host
         $BootIndex = Read-Host "Enter ImageIndex number corresponding to the ""Microsoft Windows Setup (x64/amd64)"" image you want to modify"
     }
     # Make sure the /IMAGE/NAME and ProductKey you have in Autounattend.xml matches the edition you are modifying
     #  Or use /IMAGE/INDEX
-    if ($null -eq $InstallIndex) {
+    if (!$InstallIndex) {
         Get-WindowsImage -ImagePath "iso_files\sources\install.wim" | Format-Table -Property ImageIndex, ImageName | Out-Host
         $InstallIndex = Read-Host "Enter ImageIndex number corresponding to the edition you want to modify. Note: This must match the edition in your Autounattend.xml."
     }
@@ -64,7 +64,6 @@ function Mount-Images {
         }
         "2019" { 
             Export-WindowsCapabilitySource -Path install -Source "$MountedPath\" -Target 'iso_files\sources\$OEM$\$1\repository' -Name OpenSSH.Server~~~~0.0.1.0
-            Export-WindowsCapabilitySource -Path install -Source "$MountedPath\" -Target 'iso_files\sources\$OEM$\$1\repository' -Name OpenSSH.Client~~~~0.0.1.0
         }
     }
     Dismount-DiskImage -DevicePath (Get-DiskImage -ImagePath $LofPath).DevicePath

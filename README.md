@@ -16,7 +16,7 @@
   * [Customizing installed Windows packages](#customizing-installed-windows-packages)
   * [Modifying the cloud-init](#modifying-the-cloud-init)
 * [Using the Windows service/image](#using-the-windows-serviceimage)
-  * [Adding Windows service to the HPE Bare Metal portal](#adding-windows-service-to-the-hpe-bare-metal-portal)
+  * [Adding Windows service to the HPE GreenLake for PCE - Bare Metal](#adding-windows-service-to-the-hpe-greenlake-for-pce---bare-metal)
   * [Creating a Windows Host with Windows Service](#creating-a-windows-host-with-windows-service)
 
 
@@ -223,15 +223,17 @@ Example:
 | | Win2019.yml
 | |
 | | To use this new service/image in HPE Bare Metal, follow these steps:
-| | (1) Copy the new image file WIn2019.iso to your web server  so that it can be reached via: http://192.169.1.131/images/Win2019.iso
+| | (1) Copy the new image file Win2019.iso to your web server  so that it can be reached via: http://192.169.1.131/images/Win2019.iso
 | | (2) Use a test program ".\Test.ps1" to test the image size and signature.
-| | (3) Use the HPE Bare Metal Portal to create a new service using the new image.  Follow these steps:
-| |     - Sign into the HPE Bare Metal Portal
-| |     - Click on "Go to tenant"
-| |         - Select the Dashboard titled "Metal Consumption"
+| | (3) Use the HPE Bare Metal Portal to create a new service using the
+| |     new image.  Follow these steps:
+| |     - Sign into the HPE GreenLake Central Bare Metal Portal.
+| |     - Go to Dashboard.
+| |     - Click on "HPE GreenLake for Private Cloud Enterprise – Manage your Private Cloud" tile
+| |     - Select "Bare Metal" from "Private Cloud Services". This leads to Bare Metal service page
 | |         - Click on the tab "OS/application Images"
 | |         - Click on the button "Add OS/Application Image"
-| |         - Upload G11-test.yml
+| |         - Upload Win2019.yml
 | | (4) Create a Bare Metal host using this OS image service.
 | +------------------------------------------------------------------------+
 +------------------------------------------------------------------------------+
@@ -322,7 +324,7 @@ The cloud-init template is saved in this repo as glm-cloud-init.template.  Custo
 
 # Using the Windows service/image
 
-## Adding Windows service to the HPE Bare Metal portal
+## Adding Windows service to the HPE GreenLake for PCE - Bare Metal
 
 When the build script completes successfully you will find the following
 instructions there for how to add this image into your HPE Bare Metal
@@ -349,12 +351,13 @@ portal.  For example:
 | |     the image size and signature.
 | | (3) Use the HPE Bare Metal Portal to create a new service using the
 | |     new image.  Follow these steps:
-| |     - Sign into the HPE Bare Metal Portal
-| |     - Click on "Go to tenant"
-| |         - Select the Dashboard titled "Metal Consumption"
+| |     - Sign into the HPE GreenLake Central Bare Metal Portal.
+| |     - Go to Dashboard.
+| |     - Click on "HPE GreenLake for Private Cloud Enterprise – Manage your Private Cloud" tile
+| |     - Select "Bare Metal" from "Private Cloud Services". This leads to Bare Metal service page
 | |         - Click on the tab "OS/application Images"
 | |         - Click on the button "Add OS/Application Image"
-| |         - Upload G11-test.yml
+| |         - Upload Win2019.yml
 | | (4) Create a Bare Metal host using this OS image service.
 | +------------------------------------------------------------------------+
 +------------------------------------------------------------------------------+
