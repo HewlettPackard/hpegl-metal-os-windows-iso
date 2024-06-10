@@ -15,7 +15,7 @@ type: deploy
 svc_category: windows
 svc_flavor: windows
 svc_ver: "${WindowsServerVersion}"
-description: ${ServiceDescription}
+description: ${ServiceDescription} This requires portal version v0.24.116 or later. If running on an MR storage controller, the controller requires firmware version 52.26.3 or later.
 timeout: 6000
 approach: vmedia
 assumed_boot: na
@@ -77,6 +77,19 @@ info:
   target: vmedia-floppy
   path: /glm_finisher.ps1
   contents: $([System.Convert]::ToBase64String([System.IO.File]::ReadAllBytes("$CurrentPath/glm_finisher.ps1.template.dos")))
+user_defined_steps:
+  imgprep_steps:
+  - operation: Boot Service OS
+    description: Powers on and boots machine into Service OS
+  - operation: Set RAID AutoConfig
+    description: Set RAID AutoConfig
+    parameters:
+    - name: AutoConfig Mode
+      value: none
+      description: 'AutoConfig mode for MR controllers, one of these values: none,
+        JBOD. JBOD will present unconfigured drives to operating system. none will
+        present only configured logical volumes to operating system.'
+      type: String
 project_use: true
 hoster_use: true
 "@

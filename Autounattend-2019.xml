@@ -129,7 +129,7 @@
                 <RunSynchronousCommand wcm:action="add">
                     <Order>9</Order>
                     <Description>Enable EMS Console</Description>
-                    <Path>PowerShell -WindowStyle Maximized -Command "bcdedit /ems '{current}' on; bcdedit /emssettings EMSPORT:2 EMSBAUDRATE:115200; bcdedit /set '{bootmgr}' displaybootmenu yes; bcdedit /set '{bootmgr}' timeout 8; bcdedit /set '{bootmgr}' bootems yes"</Path>
+                    <Path>PowerShell -WindowStyle Maximized -Command "bcdedit /ems '{current}' on; bcdedit /emssettings EMSPORT:2 EMSBAUDRATE:115200; bcdedit /set '{bootmgr}' displaybootmenu yes; bcdedit /set '{bootmgr}' bootems yes; bcdedit /timeout 5"</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>10</Order>

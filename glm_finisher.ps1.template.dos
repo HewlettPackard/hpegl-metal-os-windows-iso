@@ -1,5 +1,7 @@
 # (C) Copyright 2024 Hewlett Packard Enterprise Development LP
 
+bcdedit /timeout 5
+
 Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -name "fDenyTSConnections" -value 0
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 
