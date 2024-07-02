@@ -132,7 +132,7 @@ Write-Progress -Activity "Edit ISO" -PercentComplete 50 -Status "Modify files"
 
 # Download utilities
 New-Item -Name 'iso_files\sources\$OEM$\$1\downloads' -ItemType Directory -Force
-Start-BitsTransfer -Description "CloudBase Setup" -Source "https://www.cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi" -Destination 'iso_files\sources\$OEM$\$1\downloads\cloudbaseinitsetup.msi'
+Start-BitsTransfer -Description "CloudBase Setup" -Source "https://github.com/cloudbase/cloudbase-init/releases/download/1.1.4/CloudbaseInitSetup_1_1_4_x64.msi" -Destination 'iso_files\sources\$OEM$\$1\downloads\cloudbaseinitsetup.msi'
 Start-BitsTransfer -Description "Prometheus Windows Node Exporter" -Source "https://github.com/prometheus-community/windows_exporter/releases/download/v0.25.1/windows_exporter-0.25.1-amd64.msi" -Destination 'iso_files\sources\$OEM$\$1\downloads\windowsexporter.msi'
 $EncodedAdministratorPassword = [Convert]::ToBase64String([System.Text.Encoding]::Unicode.GetBytes($(ConvertFrom-SecureString -SecureString $AdministratorCredentials.Password -AsPlainText) + "AdministratorPassword"))
 (Get-Content "Autounattend-${WindowsServerVersion}.xml").Replace('INSTALLINDEX', $InstallIndex).Replace('ADMINISTRATORPASSWORD', $EncodedAdministratorPassword) | Set-Content "$CurrentPath\Autounattend.xml"
