@@ -185,10 +185,13 @@ PARAMETERS
         $(ConvertTo-SecureString 'PlainTextPasswrd' -AsPlainText -Force)
 
     -BootIndex <String>
-        Index number of Boot image to use. Overrides what is set in Config.ps1
+        Index number of Boot image to use. Overrides what is set in Config.ps1. This must match the Index number from
+        the boot.wim of the source ISO that is the "Microsoft Windows Setup (amd64/x64)" entry, not the PXE entry.
+        If left blank or $null, the script will prompt.
 
     -InstallIndex <String>
-        Index number of Install image to use. Overrides what is set in Config.ps1
+        Index number of Install image to use. Overrides what is set in Config.ps1. This must match the Index number from
+        the install.wim of the source ISO that you want to install. If left blank or $null, the script will prompt.
 
     <CommonParameters>
         This cmdlet supports the common parameters: Verbose, Debug,

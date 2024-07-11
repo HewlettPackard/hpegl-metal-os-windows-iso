@@ -7,13 +7,28 @@ This file will describe some of the requirements enforced for the web server hos
 ## Secure Web Server
 
 HPE Bare Metal requires the ISO file be hosted on an SSL-enabled web server (HTTPS). This web server's SSL
-certificate must be issued by a common, public trusted Certificate Authority (self-signed, and internal private CAs
-are not currently supported). 
+certificate must be issued by a common, public trusted Certificate Authority.
+
+Starting with Bare Metal v0.24.143, this SSL certificate validation can be skipped for an individual file. This
+can be useful for internal web servers that use either a self-signed, or private CA issued SSL certificate.
+In the `files` section of the yml file, add `skip_ssl_verify: true` so the section looks like:
+```
+files:
+- path: Win2019.iso
+  file_size: 5787441152
+  display_url: WindowsBYOI
+  secure_url: https://www.company.com/dir/Win2019.iso
+  skip_ssl_verify: true
+  download_timeout: 3000
+  signature: f1244db14f6c59ff8687a333cbb67d71f18234062baeea9e3d4a6c02d0d6dc93
+  algorithm: sha256sum
+  expand: false
+```
 
 ## Accessibility
 
 This web server must be accessible from the On-Prem controller. This web server can be internal in the
-customer network or on the public internet (ex: AWS S3, Azue Blob Storage).
+customer network or on the public internet (ex: AWS S3, Azure Blob Storage).
 
 ## Target webserver specification
 
