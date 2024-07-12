@@ -21,9 +21,12 @@
     This needs to be a SecureString format. You can generate SecureString from Plain Text by:
     $(ConvertTo-SecureString 'PlainTextPasswrd' -AsPlainText -Force)
 .PARAMETER BootIndex
-    Index number of Boot image to use. Overrides what is set in Config.ps1
+    Index number of Boot image to use. Overrides what is set in Config.ps1. This must match the Index number from
+    the boot.wim of the source ISO that is the "Microsoft Windows Setup (amd64/x64)" entry, not the PXE entry.
+    If left blank or $null, the script will prompt.
 .PARAMETER InstallIndex
-    Index number of Install image to use. Overrides what is set in Config.ps1
+    Index number of Install image to use. Overrides what is set in Config.ps1. This must match the Index number from
+    the install.wim of the source ISO that you want to install. If left blank or $null, the script will prompt.
 .EXAMPLE
     .\Main.ps1 -WindowsServerVersion 2019
 .EXAMPLE
@@ -194,3 +197,33 @@ if (!$Unattended) {
         Start-TestVM -CurrentPath $CurrentPath -WindowsServerVersion ${WindowsServerVersion}
     }
 }
+
+$IsoUrl = $Global:config.IsoUrl
+
+Write-Host @"
++------------------------------------------------------------------------------+
+| +------------------------------------------------------------------------+
+| | This build generated a new Bare Metal Windows service/image consisting of two files:
+| | Win${WindowsServerVersion}.iso
+| | Win${WindowsServerVersion}.yml
+| |
+| | The default Windows image will operate in evaluation mode for 90 days.
+| | To activate Windows, you will need to provide a valid product key.
+| |
+| | To use this new service/image in HPE Bare Metal, follow these steps:
+| | (1) Copy the new image file Win${WindowsServerVersion}.iso to your web server so that it can be
+| |     reached via: ${IsoUrl}/Win${WindowsServerVersion}.iso
+| | (2) Use the test program ".\Test.ps1" to test the image size and signature.
+| | (3) Use the HPE Bare Metal Portal to create a new service using the
+| |     new image.  Follow these steps:
+| |     - Sign into the HPE GreenLake Central Bare Metal Portal.
+| |     - Go to Dashboard.
+| |     - Click on "HPE GreenLake for Private Cloud Enterprise - Manage your Private Cloud" tile
+| |     - Select "Bare Metal" from "Private Cloud Services". This leads to Bare Metal service page
+| |         - Click on the tab "OS/application Images"
+| |         - Click on the button "Add OS/Application Image"
+| |         - Upload Win${WindowsServerVersion}.yml
+| | (4) Create a Bare Metal host using this OS image service.
+| +------------------------------------------------------------------------+
++------------------------------------------------------------------------------+
+"@

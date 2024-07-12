@@ -28,10 +28,14 @@ By building a custom image via this process, you can control the exact version o
 used and modify how Windows is installed via an Autounattend file. Once the build is done,
 you can add your new service to the HPE Bare Metal Portal and deploy a host with that new image.
 
+Default parameters, such as Windows 2019 and 2022 source ISO locations and target web server information
+are specified in `Config\Config.ps1`. You should edit this file for your own environment.
+
 # Windows Licensing
 
 > [!NOTE]
-> Microsoft Windows will operate in evaluation mode for 90 days.  
+> The default configuration will create an image using an evaluation version of Windows Server.
+> These editions of Microsoft Windows will operate in evaluation mode for 90 days.  
 > To use this Windows after the evaluation period, you must register for a Microsoft product license.
 
 Before you begin, check to see that you have the correct evaluation 
@@ -45,10 +49,6 @@ find this file in the downloaded files from GitHub, which are referenced later
 in this document.
 
 # Building the Windows image
-Please refer to the workflow diagram:
-
-![image](https://github.com/hpe-hcss/bmaas-byoi-windows-image/assets/90067804/7be87318-b9fa-4233-8fda-4e1081991f7e)
-
 These are the high-level steps required to generate the Windows service:
 * Get a Microsoft Windows Desktop and/or Server with 250GB of free disk space for the build
 * Install PowerShell 7 or later
@@ -56,6 +56,7 @@ These are the high-level steps required to generate the Windows service:
 * Install the Microsoft Windows Add-on (Windows ADK-PE)
 * Install Git (Version Control tool)
 * Set up a local file transfer/storage tool (E.g. Local Web Server with HTTPS support) that Bare Metal can reach over the network.
+  * See [Hosting](Hosting.md) file for additional requirements on the web server.
 * Downloading recipe repo from GitHub
 * Downloading a Windows .ISO file (or letting the script download an eval version)
 * Build the Bare Metal Windows image/service
@@ -152,8 +153,9 @@ SYNOPSIS
 
 
 SYNTAX
-    .\Main.ps1 [-WindowsServerVersion] <String> [-Unattended] [[-AdministratorPassword] <SecureString>] [[-PortalUserName] <String>]
-    [[-PortalPassword] <SecureString>] [<CommonParameters>]
+    .\Main.ps1 [-WindowsServerVersion] <String> [-Unattended]
+    [[-AdministratorPassword] <SecureString>] [[-PortalUserName] <String>] [[-PortalPassword] <SecureString>]
+    [[-BootIndex] <String>] [[-InstallIndex] <String>] [<CommonParameters>]
 
 
 DESCRIPTION
@@ -171,6 +173,8 @@ PARAMETERS
         When running unattended, the password for the Administrator account to encode in Autounattend.xml
         This needs to be a SecureString format. You can generate SecureString from Plain Text by:
         $(ConvertTo-SecureString 'PlainTextPasswrd' -AsPlainText -Force)
+        NOTE: This password is only availble during install. After first boot, when CloudBase-Init runs, the
+              Administrator account is renamed to GreenLakeAdmin and the password is randomized
 
     -PortalUserName <String>
         User name for the Bare Metal portal to use for uploading the built service
@@ -179,6 +183,15 @@ PARAMETERS
         When running unattended, the password for the Bare Metal portal user specified in PortalUserName
         This needs to be a SecureString format. You can generate SecureString from Plain Text by:
         $(ConvertTo-SecureString 'PlainTextPasswrd' -AsPlainText -Force)
+
+    -BootIndex <String>
+        Index number of Boot image to use. Overrides what is set in Config.ps1. This must match the Index number from
+        the boot.wim of the source ISO that is the "Microsoft Windows Setup (amd64/x64)" entry, not the PXE entry.
+        If left blank or $null, the script will prompt.
+
+    -InstallIndex <String>
+        Index number of Install image to use. Overrides what is set in Config.ps1. This must match the Index number from
+        the install.wim of the source ISO that you want to install. If left blank or $null, the script will prompt.
 
     <CommonParameters>
         This cmdlet supports the common parameters: Verbose, Debug,
@@ -197,7 +210,9 @@ PARAMETERS
 
     -------------------------- EXAMPLE 2 --------------------------
 
-    PS > .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -Unattend
+    PS > .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword'
+    -AsPlainText -Force) -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString
+    'PlainTextPassword' -AsPlainText -Force) -BootIndex 2 -InstallIndex 4 -Unattended
 
 
 
@@ -223,13 +238,13 @@ Example:
 | | Win2019.yml
 | |
 | | To use this new service/image in HPE Bare Metal, follow these steps:
-| | (1) Copy the new image file Win2019.iso to your web server  so that it can be reached via: http://192.169.1.131/images/Win2019.iso
-| | (2) Use a test program ".\Test.ps1" to test the image size and signature.
+| | (1) Copy the new image file Win2019.iso to your web server so that it can be reached via: http://192.169.1.131/images/Win2019.iso
+| | (2) Use the test program ".\Test.ps1" to test the image size and signature.
 | | (3) Use the HPE Bare Metal Portal to create a new service using the
 | |     new image.  Follow these steps:
 | |     - Sign into the HPE GreenLake Central Bare Metal Portal.
 | |     - Go to Dashboard.
-| |     - Click on "HPE GreenLake for Private Cloud Enterprise – Manage your Private Cloud" tile
+| |     - Click on "HPE GreenLake for Private Cloud Enterprise - Manage your Private Cloud" tile
 | |     - Select "Bare Metal" from "Private Cloud Services". This leads to Bare Metal service page
 | |         - Click on the tab "OS/application Images"
 | |         - Click on the button "Add OS/Application Image"
@@ -290,11 +305,10 @@ glm-cloudbaseinit-setup.ps1.template.dos | This is the cloud-init template file 
 glm_finisher.ps1.template.dos | This is the Bare Metal finisher script that installs just before the final reboot.
 glm-meta-data.template.dos | A go template file to be used for Bare Metal Consumption.
 glm-network-config.template.dos | A go template file used to setup networking configuration for Bare Metal
-glm-service.yml.template | This is the Bare Metal .YML service file template.
-glm-user-data.template.dos | A template file used to populate user date for Bare Metal
+glm-user-data.template.dos | A template file used to populate user date for Bare Metal. This is where you can specify more users to create and commands to run at the end of CloudBase-Init's execution.
 glm-windowsexporter-setup.ps1.template.dos | A template file used for the Windows Exporter configuration.
 Install-ADK.ps1 | A basic script to install ADK & ADK-PE
-SetupComplete.cmd | A command that will run on the first official boot, installing things that need the complete OS to be installed.
+SetupComplete.cmd | A command that will run on the first official boot, installing things that need the complete OS to be installed. This is run before CloudBase-Init so users and networking is not set up yet
 Test.ps1 | This is the PowerShell script to test that the uploaded ISO matches the definition
 
 
@@ -317,6 +331,9 @@ you may need to look for something in a much earlier pass.
 Additional packages can also be added when cloud-init runs, which may be ideal for your needs.  At this stage, the network
 should be established, as well as the operating system being fully installed.
 
+If you want to add additional drivers to the initial Windows install, you can add them to `Modules\Drivers.ps1`. The default
+configuration only installs the minimum drivers needed to install Windows with Ethernet networking.
+
 ## Modifying the cloud-init
 
 This service uses cloud-init to customize the deployed image after a Windows Install.
@@ -333,15 +350,13 @@ portal.  For example:
 ```
 +------------------------------------------------------------------------------+
 | +------------------------------------------------------------------------+
-| | Windows will operate in evaluation mode for 90 days.  To
-| | activate Windows, you will need to provide a valid product
-| | key.
-| +
-| | This build generated a new Bare Metal Windows
-| | service/image consisting of two files:
+| | This build generated a new Bare Metal Windows service/image consisting of two files:
 | | Win2019.iso
 | | Win2019.yml
-| +
+| |
+| | The default Windows image will operate in evaluation mode for 90 days.
+| | To activate Windows, you will need to provide a valid product key.
+| |
 | | To use this new service/image in HPE Bare Metal, follow these
 | | steps:
 | | (1) Copy the new image file Win2019.iso
@@ -353,7 +368,7 @@ portal.  For example:
 | |     new image.  Follow these steps:
 | |     - Sign into the HPE GreenLake Central Bare Metal Portal.
 | |     - Go to Dashboard.
-| |     - Click on "HPE GreenLake for Private Cloud Enterprise – Manage your Private Cloud" tile
+| |     - Click on "HPE GreenLake for Private Cloud Enterprise â€“ Manage your Private Cloud" tile
 | |     - Select "Bare Metal" from "Private Cloud Services". This leads to Bare Metal service page
 | |         - Click on the tab "OS/application Images"
 | |         - Click on the button "Add OS/Application Image"
@@ -410,6 +425,12 @@ The implications of the default setup are:
 * MPIO ability for remote storage products + expansion
 * iSCSI for remote storage
 * Access via SSH with shared secure keys supplied at boot
+
+> [!NOTE]
+> If you want to persist a known password after the built-in Administrator account is renamed
+> to GreenlakeAdmin, you can modify `glm-user-data.template.dos` and add `passwd: <Your Clear Text Password>`
+> to the `users` section under the appropriate user entry. However please note that password will be
+> stored in clear text in the user-data file.
 
 ### Network Setup
 
