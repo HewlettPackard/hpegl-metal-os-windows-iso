@@ -5,15 +5,6 @@ version: 1
 config:
   {{- $vlan_parent := ""}}
   {{- range .Connections}}
-  {{- if and (eq (len .Interfaces) 1) (le (len .Networks) 1) }}
-  # single interface and network (no VLANs)
-    {{- $iface := index .Interfaces 0}}
-  - type: physical
-    name: {{$iface.Name}}
-    mac_address: {{$iface.HWAddr}}
-    mtu: 1450
-      {{- $vlan_parent = $iface.Name}}
-  {{- else}}
   # multiple interfaces or networks so we need a bond/team NIC
     {{- range .Interfaces}}
   - type: physical
@@ -32,7 +23,6 @@ config:
       bond-mode: active-backup
       bond-lacp-rate: false
       {{- $vlan_parent = .Name}}
-  {{- end}}
 
   {{- if gt .UntaggedNet.VID 0 }}
       {{- $net_zero := .UntaggedNet }}
