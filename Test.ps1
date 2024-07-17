@@ -19,8 +19,15 @@ $ServiceFile = $(Get-Content -Path "Service.yml" | ConvertFrom-Yaml).files.path
 $ServiceSignature = $(Get-Content -Path "Service.yml" | ConvertFrom-Yaml).files.signature
 $ServiceAlgorithm = $(Get-Content -Path "Service.yml" | ConvertFrom-Yaml).files.algorithm
 $ServiceSize = $(Get-Content -Path "Service.yml" | ConvertFrom-Yaml).files.file_size
-Write-Progress -Activity "Verify Service" -Status "Downloading Service ISO" -PercentComplete 10
-Start-BitsTransfer -Description "Download Service File" -Source $ServiceUrl -Destination $ServiceFile
+$SkipSslVerify = $(Get-Content -Path "Service.yml" | ConvertFrom-Yaml).files.skip_ssl_verify
+
+Write-Progress -Activity "Verify Service" -Status "Downloading Service ISO." -PercentComplete 10
+if ($SkipSslVerify -eq $true) {
+    Invoke-WebRequest -Uri $ServiceUrl -SkipCertificateCheck -OutFile $ServiceFile
+}
+else {
+    Invoke-WebRequest -Uri $ServiceUrl -OutFile $ServiceFile
+}
 Write-Progress -Activity "Verify Service" -Status "Generating hash of downloaded ISO" -PercentComplete 70
 switch ($ServiceAlgorithm) {
     "sha256sum" { 
