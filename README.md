@@ -382,6 +382,12 @@ Follow the instructions as directed!
 
 ## Creating a Windows Host with Windows Service
 
+> [!NOTE]
+> Once an Operating System is added to Bare Metal and is used by a Compute Instance, it cannot be modified.
+> If you need to make changes to an Operating System definition you must create a new Operating System
+> definition that uses a different name. If you create a new Operating System definition, Compute Instances
+> that use the old definition will be unaffected by the new definition.
+
 ### Host name requirements
 
 Windows has limits on the length and contents of the Computer Name beyond what Bare Metal has.
