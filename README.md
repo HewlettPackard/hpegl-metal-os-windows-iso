@@ -301,12 +301,12 @@ Autounattend-2019.xml | Autounattend file that will be selected when you are bui
 Autounattend-2022.xml | Autounattend file that will be selected when you are building Windows Server 2022
 Main.ps1 | Makes the necessary modifications to a new ISO, and then creates a YAML file for it to be used by Bare Metal.
 Get-ADK.ps1 | A basic script to retrieve the Windows ADK and WinPE add-on packages
-glm-cloudbaseinit-setup.ps1.template.dos | This is the cloud-init template file that Bare Metal will use to setup cloud-init to run on the 1st boot.
+glm-cloudbaseinit-setup.ps1.template.dos | This is the cloud-init template file that Bare Metal will use to setup cloud-init to run on the 1st boot. This is where you can create more files in CloudBase-Init's LocalScripts directory to be executed after installation.
 glm_finisher.ps1.template.dos | This is the Bare Metal finisher script that installs just before the final reboot.
 glm-meta-data.template.dos | A go template file to be used for Bare Metal Consumption.
 glm-network-config.template.dos | A go template file used to setup networking configuration for Bare Metal
 glm-user-data.template.dos | A template file used to populate user date for Bare Metal. This is where you can specify more users to create and commands to run at the end of CloudBase-Init's execution.
-glm-windowsexporter-setup.ps1.template.dos | A template file used for the Windows Exporter configuration.
+glm-user-data.template.dos | A template file used to populate user date for Bare Metal.
 Install-ADK.ps1 | A basic script to install ADK & ADK-PE
 SetupComplete.cmd | A command that will run on the first official boot, installing things that need the complete OS to be installed. This is run before CloudBase-Init so users and networking is not set up yet
 Test.ps1 | This is the PowerShell script to test that the uploaded ISO matches the definition

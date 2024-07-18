@@ -43,19 +43,6 @@ users:
   {{- end}}
 {{- end}}
 
-{{- if $proxy }}
-write_files:
-  - path: c:\environment
-    permissions: '0644'
-    content: |
-        http_proxy={{$proxy}}
-        https_proxy={{$proxy}}
-        no_proxy={{$no_proxy}}
-        HTTP_PROXY={{$proxy}}
-        HTTPS_PROXY={{$proxy}}
-        NO_PROXY={{$no_proxy}}
-{{- end}}
-
 {{- if $ntp}}
 
 # NTP server information
@@ -67,10 +54,6 @@ ntp:
     - {{.}}
   {{- end}}
 {{- end}}
-
-runcmd:
-  - ['date', '>', 'C:\glm-host-create-time']
-  - ['powershell', '-verb','runas', 'C:\glm-host-create-time']
 
 # Begin GLM Host UserData
 {{ .UserData }}

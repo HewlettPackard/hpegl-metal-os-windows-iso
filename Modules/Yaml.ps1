@@ -28,6 +28,7 @@ files:
   signature: $IsoHash
   algorithm: sha256sum
   expand: false
+  skip_ssl_verify: false
 info:
 - encoding: base64
   templating: go-text-template
