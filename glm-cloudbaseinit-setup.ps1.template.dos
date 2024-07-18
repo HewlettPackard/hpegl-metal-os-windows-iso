@@ -63,3 +63,14 @@ Remove-Item C:\downloads\$msiFileName -Confirm:$false -Force
 Enable-WindowsOptionalFeature -Online -NoRestart -FeatureName MultipathIO
 #enable Multipathio
 Set-Service -Name MSiSCSI -StartupType Automatic
+
+# If you want to run more commands at the end of CloudBase-Init's execution, you can create those scripts here.
+# Note: These scripts will run every time CloudBase-Init starts. Make sure you write your script accordingly.
+# As an example these lines of code will create a PowerShell script named DeployTime.ps1 in the LocalScripts directory
+#   When CloudBase-Init runs the LocalScriptsPlugin, this script will get executed and create a file with the current time
+#   if that file doesn't already exist.
+@'
+If (-Not (Test-Path -Path "C:\DeployTime.txt" -PathType leaf)) {
+    $(Get-Date).ToString() | Out-File -FilePath "C:\DeployTime.txt"
+}
+'@ | Out-File -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DeployTime.ps1"
