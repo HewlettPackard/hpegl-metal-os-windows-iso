@@ -74,3 +74,32 @@ If (-Not (Test-Path -Path "C:\DeployTime.txt" -PathType leaf)) {
     $(Get-Date).ToString() | Out-File -FilePath "C:\DeployTime.txt"
 }
 '@ | Out-File -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DeployTime.ps1"
+
+# Make each VLAN use a fixed MAC address
+{{- if .Connections}}
+  {{- $fabric := ""}}
+  {{- $macnocolon := "" }}
+  {{- range .Connections}}
+    {{/* Get MAC address of 1st .Interface */}}
+    {{- $mac := (index .Interfaces 0).HWAddr }}
+
+    {{/* Convert MAC addr from GLM format d0:67:26:0a:e9:ac to Windows d067260ae9ac format */}}
+    {{- $mac1 := slice $mac 0 2 }}
+    {{- $mac2 := slice $mac 3 5 }}
+    {{- $mac3 := slice $mac 6 8 }}
+    {{- $mac4 := slice $mac 9 11 }}
+    {{- $mac5 := slice $mac 12 14 }}
+    {{- $mac6 := slice $mac 15 17 }}
+    {{- $macnocolon = printf "%s%s%s%s%s%s" $mac1 $mac2 $mac3 $mac4 $mac5 $mac6 }}
+
+    {{/* Use the Name from .Connections */}}
+    {{- $fabric = .Name }}
+
+    {{/* Set the MAC address of each VLAN */}}
+    {{- range .Networks }}
+@'
+Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}.{{ .VID }}" -DisplayName "MAC Address" -DisplayValue "{{ $macnocolon }}"
+'@ | Out-File -Encoding Ascii -Append -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\SetMacAddress.ps1"
+    {{- end }} {{/* end range .Networks */}}
+  {{- end}}  {{/* end range .Connections  */}}
+{{- end}}    {{/* end if .Connections */}}
