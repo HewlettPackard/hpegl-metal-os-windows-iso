@@ -6,6 +6,7 @@
 {{- if .SSHKeys }}
 users:
   - name: GreenLakeAdmin
+    passwd: CLEARTEXTPASSWORD
     ssh_authorized_keys:
   {{- range $key := .SSHKeys}}
       - {{$key }}
