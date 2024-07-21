@@ -27,7 +27,7 @@ username=GreenlakeAdmin
 rename_admin_user=true
 # Services that will be tested for loading until one of them succeeds.
 metadata_services=cloudbaseinit.metadata.services.nocloudservice.NoCloudConfigDriveService
-plugins= cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin, cloudbaseinit.plugins.windows.createuser.CreateUserPlugin, cloudbaseinit.plugins.common.mtu.MTUPlugin, cloudbaseinit.plugins.windows.ntpclient.NTPClientPlugin, cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin, cloudbaseinit.plugins.windows.licensing.WindowsLicensingPlugin, cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin, cloudbaseinit.plugins.windows.winrmlistener.ConfigWinRMListenerPlugin, cloudbaseinit.plugins.common.localscripts.LocalScriptsPlugin
+plugins= cloudbaseinit.plugins.common.networkconfig.NetworkConfigPlugin, cloudbaseinit.plugins.windows.createuser.CreateUserPlugin, cloudbaseinit.plugins.common.mtu.MTUPlugin, cloudbaseinit.plugins.windows.ntpclient.NTPClientPlugin, cloudbaseinit.plugins.common.sethostname.SetHostNamePlugin, cloudbaseinit.plugins.windows.licensing.WindowsLicensingPlugin, cloudbaseinit.plugins.common.sshpublickeys.SetUserSSHPublicKeysPlugin, cloudbaseinit.plugins.windows.winrmlistener.ConfigWinRMListenerPlugin, cloudbaseinit.plugins.common.userdata.UserDataPlugin, cloudbaseinit.plugins.common.localscripts.LocalScriptsPlugin
 
 [config_drive]
 # Which devices to inspect for a possible configuration drive
@@ -95,7 +95,12 @@ If (-Not (Test-Path -Path "C:\DeployTime.txt" -PathType leaf)) {
     {{/* Use the Name from .Connections */}}
     {{- $fabric = .Name }}
 
-    {{/* Set the MAC address of each VLAN */}}
+# Set the MAC address on the Team interface for untagged network
+@'
+Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}" -DisplayName "MAC Address" -DisplayValue "{{ $macnocolon }}"
+'@ | Out-File -Encoding Ascii -Append -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\SetMacAddress.ps1"
+
+# Set the MAC address of each VLAN tagged network
     {{- range .Networks }}
 @'
 Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}.{{ .VID }}" -DisplayName "MAC Address" -DisplayValue "{{ $macnocolon }}"
@@ -103,3 +108,10 @@ Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}.{{ .VID }}" -DisplayName "MA
     {{- end }} {{/* end range .Networks */}}
   {{- end}}  {{/* end range .Connections  */}}
 {{- end}}    {{/* end if .Connections */}}
+
+# Setting the CloudBase-Init service to Disabled so it will not run on future boots and reset settings that were
+# manually configured after boot, such as manually reset GreenlakeAdmin password
+@'
+Set-Service -Name cloudbase-init -StartupType Disabled
+'@ | Out-File -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DisableCloudBaseInit.ps1"
+
