@@ -324,7 +324,7 @@ These scripts support one of two ways of securing the default GreenlakeAdmin acc
    * This password should be set in clear text in the user-data file with the passwd property in the users section
    * This password must meet password complexity requirements of the Windows OS (default of minimum 10 characters with a mix of upper-case, lower-case, number, and symbol)
    * In addition, the CloudBase-Init configuration file must load [UserDataPlugin](glm-user-data.template.dos#L30) at some point after CreateUserPlugin but before LocalScriptPlugin
-   * After the initial boot if Windows and giving CloudBase-Init time to run, it will set this password and you will be able to use it to log in via RDP or Serial Console SAC
+   * After the initial boot of Windows, and giving CloudBase-Init time to run, it will set this password and you will be able to use it to log in via RDP or Serial Console SAC
    * The CloudBase-Init LocalScripts will then set the CloudBase-Init service to Disabled so you can change that password post-deployment without CloudBase-Init setting it back to the defined value after reboot
 1. Randomly generated password
    * If the password is not specified in the user-data file (or the password specified does not meet complexity requirements), then CloudBase-Init will set a random password for the GreenlakeAdmin user
