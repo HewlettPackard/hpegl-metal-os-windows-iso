@@ -448,12 +448,6 @@ The implications of the default setup are:
 * iSCSI for remote storage
 * Access via SSH with shared secure keys supplied at boot
 
-> [!NOTE]
-> If you want to persist a known password after the built-in Administrator account is renamed
-> to GreenlakeAdmin, you can modify `glm-user-data.template.dos` and add `passwd: <Your Clear Text Password>`
-> to the `users` section under the appropriate user entry. However please note that password will be
-> stored in clear text in the user-data file.
-
 ### Network Setup
 
 Host network setup should happen automatically. To validate the installation,
