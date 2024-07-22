@@ -5,7 +5,7 @@
 # ----------------------------------------------------
 {{- if .SSHKeys }}
 users:
-  - name: GreenLakeAdmin
+  - name: GreenlakeAdmin
     passwd: CLEARTEXTPASSWORD
     ssh_authorized_keys:
   {{- range $key := .SSHKeys}}
