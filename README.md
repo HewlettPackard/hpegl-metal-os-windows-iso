@@ -327,7 +327,7 @@ These scripts support one of two ways of securing the default GreenLakeAdmin acc
    * After the initial boot of Windows, and giving CloudBase-Init time to run, it will set this password and you will be able to use it to log in via RDP or Serial Console SAC
    * The CloudBase-Init LocalScripts will then set the CloudBase-Init service to Disabled so you can change that password post-deployment without CloudBase-Init setting it back to the defined value after reboot
 1. Randomly generated password
-   * If the password is not specified in the user-data file (or the password specified does not meet complexity requirements), then CloudBase-Init will set a random password for the GreenlakeAdmin user
+   * If the password is not specified in the user-data file (or the password specified does not meet complexity requirements), then CloudBase-Init will set a random password for the GreenLakeAdmin user
    * With this setting, the UserDataPlugin is not needed
    * It is also not necessary to disable the CloudBase-Init service after initial boot, however there is no harm in keeping it disabled in this configuration
 
