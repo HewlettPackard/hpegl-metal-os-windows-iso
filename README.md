@@ -317,7 +317,7 @@ General changes that you want to contribute back via a pull request are much app
 
 ## Default GreenLakeAdmin password
 
-These scripts support one of two ways of securing the default GreenlakeAdmin account. This is the built-in Administrator account that has been renamed.
+These scripts support one of two ways of securing the default GreenLakeAdmin account. This is the built-in Administrator account that has been renamed.
 
 1. User defined password in the [user-data](glm-user-data.template.dos#L9) file.
    * This will enable a known password to be used for the GreenlakeAdmin account
