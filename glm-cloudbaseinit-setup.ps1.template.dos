@@ -23,7 +23,7 @@ logdir=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\log\
 logfile=cloudbase-init.log
 default_log_levels=comtypes=INFO,suds=INFO,iso8601=WARN,requests=WARN
 local_scripts_path=C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\
-username=GreenlakeAdmin
+username=GreenLakeAdmin
 rename_admin_user=true
 # Services that will be tested for loading until one of them succeeds.
 metadata_services=cloudbaseinit.metadata.services.nocloudservice.NoCloudConfigDriveService
