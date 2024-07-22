@@ -12,7 +12,7 @@
   * [Building the Bare Metal Windows image and service](#building-the-bare-metal-windows-image-and-service)
 * [Customizing the Windows image](#customizing-the-windows-image)
   * [Modifying the way the image is built](#modifying-the-way-the-image-is-built)
-  * [Default GreenlakeAdmin account password](#default-greenlakeadmin-password)
+  * [Default GreenLakeAdmin account password](#default-greenlakeadmin-password)
   * [Modifying the Windows Autounattend XML file](#modifying-the-windows-autounattend-xml-file)
   * [Customizing installed Windows packages](#customizing-installed-windows-packages)
   * [Modifying the cloud-init](#modifying-the-cloud-init)
