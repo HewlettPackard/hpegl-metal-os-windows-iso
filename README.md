@@ -12,6 +12,7 @@
   * [Building the Bare Metal Windows image and service](#building-the-bare-metal-windows-image-and-service)
 * [Customizing the Windows image](#customizing-the-windows-image)
   * [Modifying the way the image is built](#modifying-the-way-the-image-is-built)
+  * [Default GreenLakeAdmin account password](#default-greenlakeadmin-password)
   * [Modifying the Windows Autounattend XML file](#modifying-the-windows-autounattend-xml-file)
   * [Customizing installed Windows packages](#customizing-installed-windows-packages)
   * [Modifying the cloud-init](#modifying-the-cloud-init)
@@ -306,7 +307,6 @@ glm_finisher.ps1.template.dos | This is the Bare Metal finisher script that inst
 glm-meta-data.template.dos | A go template file to be used for Bare Metal Consumption.
 glm-network-config.template.dos | A go template file used to setup networking configuration for Bare Metal
 glm-user-data.template.dos | A template file used to populate user date for Bare Metal. This is where you can specify more users to create and commands to run at the end of CloudBase-Init's execution.
-glm-user-data.template.dos | A template file used to populate user date for Bare Metal.
 Install-ADK.ps1 | A basic script to install ADK & ADK-PE
 SetupComplete.cmd | A command that will run on the first official boot, installing things that need the complete OS to be installed. This is run before CloudBase-Init so users and networking is not set up yet
 Test.ps1 | This is the PowerShell script to test that the uploaded ISO matches the definition
@@ -314,6 +314,22 @@ Test.ps1 | This is the PowerShell script to test that the uploaded ISO matches t
 
 Feel free to modify these files to suit your specific needs.
 General changes that you want to contribute back via a pull request are much appreciated.
+
+## Default GreenLakeAdmin password
+
+These scripts support one of two ways of securing the default GreenLakeAdmin account. This is the built-in Administrator account that has been renamed.
+
+1. User defined password in the [user-data](glm-user-data.template.dos#L9) file.
+   * This will enable a known password to be used for the GreenLakeAdmin account
+   * This password should be set in clear text in the user-data file with the "passwd" property in the users section
+   * This password must meet password complexity requirements of the Windows OS (default of minimum 10 characters with a mix of upper-case, lower-case, number, and symbol)
+   * In addition, the CloudBase-Init configuration file must load [UserDataPlugin](glm-user-data.template.dos#L30) at some point after CreateUserPlugin but before LocalScriptPlugin
+   * After the initial boot of Windows, and giving CloudBase-Init time to run, it will set this password and you will be able to use it to log in via RDP or Serial Console SAC
+   * The CloudBase-Init LocalScripts will then set the CloudBase-Init service to Disabled so you can change that password post-deployment without CloudBase-Init setting it back to the defined value after reboot
+1. Randomly generated password
+   * If the password is not specified in the user-data file (or the password specified does not meet complexity requirements), then CloudBase-Init will set a random password for the GreenLakeAdmin user
+   * With this setting, the UserDataPlugin is not needed
+   * It is also not necessary to disable the CloudBase-Init service after initial boot, however there is no harm in keeping it disabled in this configuration
 
 ## Modifying the Windows Autounattend XML file
 
@@ -431,12 +447,6 @@ The implications of the default setup are:
 * MPIO ability for remote storage products + expansion
 * iSCSI for remote storage
 * Access via SSH with shared secure keys supplied at boot
-
-> [!NOTE]
-> If you want to persist a known password after the built-in Administrator account is renamed
-> to GreenlakeAdmin, you can modify `glm-user-data.template.dos` and add `passwd: <Your Clear Text Password>`
-> to the `users` section under the appropriate user entry. However please note that password will be
-> stored in clear text in the user-data file.
 
 ### Network Setup
 
