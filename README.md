@@ -315,7 +315,7 @@ Test.ps1 | This is the PowerShell script to test that the uploaded ISO matches t
 Feel free to modify these files to suit your specific needs.
 General changes that you want to contribute back via a pull request are much appreciated.
 
-## Default GreenlakeAdmin password
+## Default GreenLakeAdmin password
 
 These scripts support one of two ways of securing the default GreenlakeAdmin account. This is the built-in Administrator account that has been renamed.
 
