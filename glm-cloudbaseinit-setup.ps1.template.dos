@@ -113,5 +113,5 @@ Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}.{{ .VID }}" -DisplayName "MA
 # manually configured after boot, such as manually reset GreenlakeAdmin password
 @'
 Set-Service -Name cloudbase-init -StartupType Disabled
-'@ | Out-File -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DisableCloudBaseInit.ps1"
+'@ | Out-File -Encoding Ascii -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DisableCloudBaseInit.ps1"
 
