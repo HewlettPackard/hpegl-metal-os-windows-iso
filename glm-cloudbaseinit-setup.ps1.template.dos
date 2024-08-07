@@ -49,9 +49,6 @@ $NewContent = foreach ($line in $OldContent) {
 }
 Set-Content -Path "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\Python\Lib\site-packages\cloudbaseinit\osutils\windows.py" -Value $NewContent
 
-# Configure the Windows service for Cloudbase-Init.
-Start-Process sc.exe -ArgumentList "config cloudbase-init start= delayed-auto" -wait | Out-Null
-
 # Remove extraneous config files.
 Remove-Item -Path ($confPath + "cloudbase-init-unattend.conf") -Confirm:$false
 Remove-Item -Path ($confPath + "Unattend.xml") -Confirm:$false

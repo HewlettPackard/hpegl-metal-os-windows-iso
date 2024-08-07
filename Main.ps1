@@ -27,10 +27,13 @@
 .PARAMETER InstallIndex
     Index number of Install image to use. Overrides what is set in Config.ps1. This must match the Index number from
     the install.wim of the source ISO that you want to install. If left blank or $null, the script will prompt.
+.PARAMETER SkipTest
+    By default this script will run the Test.ps1 script to verify that the upload was correct, and the size and checksum
+    of the ISO matches what is defined in the YML. Setting this parameter to $true will skip this test.
 .EXAMPLE
     .\Main.ps1 -WindowsServerVersion 2019
 .EXAMPLE
-    .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -BootIndex 2 -InstallIndex 4 -Unattended
+    .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -BootIndex 2 -InstallIndex 4 -Unattended -SkipTest:$true
 #>
 
 
@@ -55,7 +58,10 @@ param (
     [string]$BootIndex,
 
     [Parameter()]
-    [string]$InstallIndex
+    [string]$InstallIndex,
+
+    [Parameter()]
+    [switch]$SkipTest
 )
 
 # Mount-WindowsImage requires Administrator so make sure we run this script as such.
@@ -87,6 +93,8 @@ if ($null -eq $BootIndex) {
 if ($null -eq $InstallIndex) {
     $InstallIndex = $global:config.InstallIndex
 }
+
+Test-Password
 
 # We don't want to store any default password in the repository.
 # Ask for the password interactivly and store it in a secure manny within this script.
@@ -189,6 +197,10 @@ if ($Unattended -or $Continue -ieq "Y") {
     if (!($null -eq $Credentials)) {
         Send-ToMetal -PortalUrl $Global:config.MetalPortal -UserName $Credentials.UserName -Password $Credentials.Password -Role $Global:config.MetalRole -Team $Global:config.MetalHoster -ResourceType "services" -YamlFile "$CurrentPath\Win${WindowsServerVersion}.yml" -WindowsServerVersion $WindowsServerVersion -ServiceName $InstallName
     }
+}
+
+if (!$SkipTest) {
+    & "$PSScriptRoot\Test.ps1" "$CurrentPath\Win${WindowsServerVersion}.yml"
 }
 
 if (!$Unattended) {
