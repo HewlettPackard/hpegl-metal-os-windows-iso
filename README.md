@@ -154,9 +154,9 @@ SYNOPSIS
 
 
 SYNTAX
-    .\Main.ps1 [-WindowsServerVersion] <String> [-Unattended]
-    [[-AdministratorPassword] <SecureString>] [[-PortalUserName] <String>] [[-PortalPassword] <SecureString>]
-    [[-BootIndex] <String>] [[-InstallIndex] <String>] [<CommonParameters>]
+    .\Main.ps1 [-WindowsServerVersion] <String> [-Unattended] [[-AdministratorPassword] <SecureString>]
+    [[-PortalUserName] <String>] [[-PortalPassword] <SecureString>] [[-BootIndex] <String>] [[-InstallIndex] <String>] 
+    [-SkipTest] [<CommonParameters>]
 
 
 DESCRIPTION
@@ -194,6 +194,10 @@ PARAMETERS
         Index number of Install image to use. Overrides what is set in Config.ps1. This must match the Index number from
         the install.wim of the source ISO that you want to install. If left blank or $null, the script will prompt.
 
+    -SkipTest [<SwitchParameter>]
+        By default this script will run the Test.ps1 script to verify that the upload was correct, and the size and checksum
+        of the ISO matches what is defined in the YML. Setting this parameter to $true will skip this test.
+
     <CommonParameters>
         This cmdlet supports the common parameters: Verbose, Debug,
         ErrorAction, ErrorVariable, WarningAction, WarningVariable,
@@ -211,9 +215,9 @@ PARAMETERS
 
     -------------------------- EXAMPLE 2 --------------------------
 
-    PS > .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword'
-    -AsPlainText -Force) -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString
-    'PlainTextPassword' -AsPlainText -Force) -BootIndex 2 -InstallIndex 4 -Unattended
+    PS > .\Main.ps1 -WindowsServerVersion 2022 -AdministratorPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force)     
+    -PortalUserName 'user@company.com' -PortalPassword $(ConvertTo-SecureString 'PlainTextPassword' -AsPlainText -Force) -BootIndex 2       
+    -InstallIndex 4 -Unattended -SkipTest:$true
 
 
 

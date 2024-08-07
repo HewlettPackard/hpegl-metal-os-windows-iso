@@ -1,4 +1,37 @@
 # (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+
+# This function will test the user-defined password from user-data to confirm if it
+# meets default Windows password complexity requirements. These rules have been documented at:
+# https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+function Test-Password {
+  $Errors = @()
+  $Password = $($(Select-String -Path .\glm-user-data.template.dos -Pattern 'passwd').Line).Split(" ")[-1]
+  If (-Not($Password -cmatch '[a-z]')) {
+    $Errors += "  Password does not contain at least one lower-case letter (a-z)."
+  }
+  If (-Not($Password -cmatch '[A-Z]')) {
+    $Errors += "  Password does not contain at least one upper-case letter (A-Z)."
+  }
+  If (-Not($Password -match '\d')) {
+    $Errors += "  Password does not contain at least one digit (0-9)."
+  }
+  If (-Not($Password -match '[!@#%\^&\$]')) {
+    $Errors += "  Password does not contain at least one special symbol (!@#%^&$)."
+  }
+  If ($Password.Substring(0, [Math]::Min($Password.Length, 1)) -match '[!@#%\^&\$]') {
+    $Errors += "  Password cannot start with a special symbol (!@#%^&$)."
+  }
+  If ($Password.Length -lt 8) {
+    $Errors += "  Password is not at least 8 characters."
+  }
+  If ($Errors.Length -gt 0) {
+    Write-Host "User-defined password is not complex enough. Please edit glm-user-data.template.dos and update the passwd line."
+    Write-host "Please see the message(s) below:"
+    $Errors
+    Exit 1
+  }
+}
+
 function New-ServiceYaml {
   param (
     $IsoHash,
@@ -19,6 +52,7 @@ description: ${ServiceDescription} This requires portal version v0.24.116 or lat
 timeout: 6000
 approach: vmedia
 assumed_boot: na
+no_switch_lag: true
 files:
 - path: Win${WindowsServerVersion}.iso
   file_size: $IsoFileSize
