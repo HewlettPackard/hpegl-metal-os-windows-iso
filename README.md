@@ -56,8 +56,11 @@ These are the high-level steps required to generate the Windows service:
 * Install the Microsoft Windows Assessment and Deployment Kit (Windows ADK)
 * Install the Microsoft Windows Add-on (Windows ADK-PE)
 * Install Git (Version Control tool)
-* Set up a local file transfer/storage tool (E.g. Local Web Server with HTTPS support) that Bare Metal can reach over the network.
-  * See [Hosting](Hosting.md) file for additional requirements on the web server.
+* Set up a local file transfer/storage tool (E.g. **Local Web Server with HTTPS support**) that Bare Metal can reach over the network.
+  * For **unsecured Web Server access**, please refer to the [Hosting](Hosting.md) for additional requirements, listed below:
+    *  A. **HTTPS** with certificates signed by **publicly trusted Certificate authority**, and
+    *  B. **Skip** the host’s **SSL certificate verification**.
+  * For **Web Server running behind the Firewall**, the Web Server IP address and Port has to be whitelisted in the **rules** and **Proxy**.
 * Downloading recipe repo from GitHub
 * Downloading a Windows .ISO file (or letting the script download an eval version)
 * Build the Bare Metal Windows image/service
