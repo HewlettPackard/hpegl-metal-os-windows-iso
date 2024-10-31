@@ -52,6 +52,7 @@ description: ${ServiceDescription} This requires portal version v0.24.116 or lat
 timeout: 6000
 approach: vmedia
 assumed_boot: na
+origin: Custom
 no_switch_lag: true
 files:
 - path: Win${WindowsServerVersion}.iso
