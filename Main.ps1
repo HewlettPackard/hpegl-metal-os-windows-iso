@@ -64,6 +64,8 @@ param (
     [switch]$SkipTest
 )
 
+# We use parameters that are only available in PowerShell 7 and later, so require that.
+#Requires -Version 7
 # Mount-WindowsImage requires Administrator so make sure we run this script as such.
 #Requires -RunAsAdministrator
 
@@ -130,6 +132,14 @@ $ADKPath = Get-AdkPath
 $OscdimgPath = "${ADKPath}Assessment and Deployment Kit\Deployment Tools\amd64\Oscdimg"
 if (![System.IO.FIle]::Exists("$OscdimgPath\oscdimg.exe")) {
     Write-Error "oscdimg.exe not found. See Get-ADK.ps1 and Install-ADK.ps1."
+}
+
+# ADK versions newer than 10.1.25398.1 don't create a bootable ISO for Win2k19
+$InstalledAdkVersion = Get-AdkVersion
+$RequiredAdkVersion = "10.1.25398.1"
+if ($WindowsServerVersion -eq "2019" -and $InstalledAdkVersion -ne $RequiredAdkVersion) {
+    Write-Error "Building Windows Server 2019 requires ADK version $RequiredAdkVersion, $InstalledAdkVersion found. Uninstall the current version then use Get-ADK.ps1 and Install-ADK.ps1 to install the required version."
+    Exit 1
 }
 
 $MountReturn = Mount-Images -LofPath $LofPath -LofUrl $LofUrl -ImagePath $ImagePath -ImageUrl $ImageUrl -BootIndex $BootIndex -InstallIndex $InstallIndex -WindowsServerVersion $WindowsServerVersion
