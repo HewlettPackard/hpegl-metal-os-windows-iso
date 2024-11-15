@@ -14,3 +14,10 @@ function Get-AdkPath {
     }
     return $ADKPath
 }
+
+function Get-AdkVersion {
+    $app = Get-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object {
+        $_.DisplayName -eq "Windows Assessment and Deployment Kit"
+    }
+    return $app.DisplayVersion
+}

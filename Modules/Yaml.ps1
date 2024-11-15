@@ -51,7 +51,7 @@ svc_ver: "${WindowsServerVersion}"
 description: ${ServiceDescription} This requires portal version v0.24.116 or later. If running on an MR storage controller, the controller requires firmware version 52.26.3 or later.
 timeout: 6000
 approach: vmedia
-assumed_boot: na
+assumed_boot_method: na
 origin: Custom
 no_switch_lag: true
 files:
