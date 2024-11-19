@@ -66,6 +66,7 @@ These are the high-level steps required to generate the Windows service:
 * Build the Bare Metal Windows image/service
  
 > [!NOTE]
+> * If you are building Windows Server 2019, you must use version 10.1.25398.1 of the ADK. Versions after 10.1.25398.1 do not create a bootable ISO image. For convienence, you can use the [Get-ADK.ps1](Get-ADK.ps1) and [Install-ADK.ps1](Install-ADK.ps1) scripts. Version 10.1.25398.1 can also be used to build Windows Server 2022 images as well.
 > * For Windows ADK and PE, please refer to https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install. ADK and PE is to assess the quality and performance of systems or components.
 > * For PowerShell 7 or later, please refer to https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4.
 > * For Git, please refer to https://git-scm.com/book/en/v2/Getting-Started-Installing-Git. For more information on it, go to https://gitforwindows.org.
