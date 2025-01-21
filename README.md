@@ -1,4 +1,4 @@
-<!-- (C) Copyright 2024 Hewlett Packard Enterprise Development LP -->
+<!-- (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP -->
 
 # Microsoft Windows Server Bring Your Own Image (BYOI) for HPE Private Cloud Enterprise - Bare Metal
 
@@ -29,7 +29,7 @@ By building a custom image via this process, you can control the exact version o
 used and modify how Windows is installed via an Autounattend file. Once the build is done,
 you can add your new service to the HPE Bare Metal Portal and deploy a host with that new image.
 
-Default parameters, such as Windows 2019 and 2022 source ISO locations and target web server information
+Default parameters, such as Windows 2019, 2022 and 2025 source ISO locations and target web server information
 are specified in `Config\Config.ps1`. You should edit this file for your own environment.
 
 # Windows Licensing
@@ -66,7 +66,7 @@ These are the high-level steps required to generate the Windows service:
 * Build the Bare Metal Windows image/service
  
 > [!NOTE]
-> * If you are building Windows Server 2019, you must use version 10.1.25398.1 of the ADK. Versions after 10.1.25398.1 do not create a bootable ISO image. For convienence, you can use the [Get-ADK.ps1](Get-ADK.ps1) and [Install-ADK.ps1](Install-ADK.ps1) scripts. Version 10.1.25398.1 can also be used to build Windows Server 2022 images as well.
+> * If you are building Windows Server 2019, you must use version 10.1.25398.1 of the ADK. Versions after 10.1.25398.1 do not create a bootable ISO image. For convienence, you can use the [Get-ADK.ps1](Get-ADK.ps1) and [Install-ADK.ps1](Install-ADK.ps1) scripts. Version 10.1.25398.1 can also be used to build Windows Server 2022 and 2025 images as well.
 > * For Windows ADK and PE, please refer to https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install. ADK and PE is to assess the quality and performance of systems or components.
 > * For PowerShell 7 or later, please refer to https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell-on-windows?view=powershell-7.4.
 > * For Git, please refer to https://git-scm.com/book/en/v2/Getting-Started-Installing-Git. For more information on it, go to https://gitforwindows.org.
@@ -110,14 +110,14 @@ git clone https://github.com/HewlettPackard/hpegl-metal-os-windows-iso.git
 
 ## Downloading a Windows .ISO file
 
-Currently, Server 2019 and Server 2022 are supported for this image,
+Currently, Server 2019, Server 2022 and Server 2025 are supported for this image,
 and while you can download and use the Evaluation versions of each, you
 may have to add additional drivers for additional hardware support, especially
 after support may end from the older images. See the `Modules\Drivers.ps1` file
 for adding more drivers for either the Boot or Install image.
 
-This Windows test is working for the latest release of Windows Server 2019 and
-Windows Server 2022, as of the time of this writing: 2024-05-04
+This Windows test is working for the latest release of Windows Server 2019, 
+Windows Server 2022 and Windows Server 2025, as of the time of this writing: 2024-11-21
 
 ## Building the Bare Metal Windows image and service
 
@@ -168,7 +168,7 @@ DESCRIPTION
 
 PARAMETERS
     -WindowsServerVersion <String>
-        Windows Server Version. Supported values are 2019 or 2022.
+        Windows Server Version. Supported values are 2019, 2022 or 2025.
 
     -Unattended [<SwitchParameter>]
         Run in unattended mode. Rebuild ISO and Upload without prompting.
@@ -308,6 +308,7 @@ Filename     | Description
 README.md | This documentation
 Autounattend-2019.xml | Autounattend file that will be selected when you are building Windows Server 2019
 Autounattend-2022.xml | Autounattend file that will be selected when you are building Windows Server 2022
+Autounattend-2025.xml | Autounattend file that will be selected when you are building Windows Server 2025
 Main.ps1 | Makes the necessary modifications to a new ISO, and then creates a YAML file for it to be used by Bare Metal.
 Get-ADK.ps1 | A basic script to retrieve the Windows ADK and WinPE add-on packages
 glm-cloudbaseinit-setup.ps1.template.dos | This is the cloud-init template file that Bare Metal will use to setup cloud-init to run on the 1st boot. This is where you can create more files in CloudBase-Init's LocalScripts directory to be executed after installation.

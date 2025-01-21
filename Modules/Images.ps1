@@ -1,4 +1,4 @@
-# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP
 function Mount-Images {
     param (
         $LofPath,
@@ -59,6 +59,9 @@ function Mount-Images {
     Mount-DiskImage -ImagePath $LofPath
     $MountedPath = (Get-DiskImage -DevicePath (Get-DiskImage -ImagePath $LofPath).DevicePath | Get-Volume).DriveLetter + ":\"
     switch ($WindowsServerVersion) {
+        "2025" { 
+            Export-WindowsCapabilitySource -Path install -Source "$MountedPath\LanguagesAndOptionalFeatures\" -Target 'iso_files\sources\$OEM$\$1\repository' -Name OpenSSH.Server~~~~0.0.1.0
+        }
         "2022" { 
             Export-WindowsCapabilitySource -Path install -Source "$MountedPath\LanguagesAndOptionalFeatures\" -Target 'iso_files\sources\$OEM$\$1\repository' -Name OpenSSH.Server~~~~0.0.1.0
         }
