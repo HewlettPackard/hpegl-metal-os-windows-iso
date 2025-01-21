@@ -2,9 +2,9 @@
 .SYNOPSIS
     Script to create a Windows image for Bare Metal deployments
 .NOTES
-    (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+    (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP
 .PARAMETER WindowsServerVersion
-    Windows Server Version. Supported values are 2019 or 2022.
+    Windows Server Version. Supported values are 2019, 2022 or 2025.
 .PARAMETER Unattended
     Run in unattended mode. Rebuild ISO and Upload without prompting.
     Make sure you supply both remaining command-line parameters as well as proper settings in Config\Config.ps1.
@@ -38,8 +38,8 @@
 
 
 param (
-    [Parameter(Mandatory = $true, HelpMessage = "Windows Server Version. Supported values are 2019 or 2022.")]
-    [ValidateSet("2019", "2022")]
+    [Parameter(Mandatory = $true, HelpMessage = "Windows Server Version. Supported values are 2019, 2022 or 2025.")]
+    [ValidateSet("2019", "2022", "2025")]
     [string]$WindowsServerVersion,
 
     [Parameter()]
@@ -123,6 +123,12 @@ switch ($WindowsServerVersion) {
         $ImageUrl = $global:config.Win19ImageUrl
         $LofPath = $global:config.Win10FodPath
         $LofUrl = $global:config.Win10FodUrl
+    }
+    "2025" {
+        $ImagePath = $global:config.Win25ImagePath
+        $ImageUrl = $global:config.Win25ImageUrl
+        $LofPath = $global:config.Win25LofPath
+        $LofUrl = $global:config.Win25LofUrl
     }
     Default {}
 }

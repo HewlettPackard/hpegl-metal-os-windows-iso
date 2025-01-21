@@ -1,4 +1,4 @@
-# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP
 $DownloadsPath = (New-Object -ComObject Shell.Application).Namespace('shell:Downloads').Self.Path
 
 $global:config = @{
@@ -21,6 +21,12 @@ $global:config = @{
     # Windows Server 2022 LOF From https://go.microsoft.com/fwlink/p/?linkid=2195333
     Win22LofUrl    = 'https://go.microsoft.com/fwlink/p/?linkid=2195333'
     Win22LofPath   = $DownloadsPath + "\20348.1.210507-1500.fe_release_amd64fre_SERVER_LOF_PACKAGES_OEM.iso"
+    # Windows Server 2025 Eval from https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us
+    Win25ImageUrl  = 'https://go.microsoft.com/fwlink/?linkid=2293312&clcid=0x409&culture=en-us&country=us'
+    Win25ImagePath = $DownloadsPath + "\26100.1742.240906-0331.ge_release_svc_refresh_SERVER_EVAL_x64FRE_en-us.iso"
+    # Windows Server 2025 LOF From https://go.microsoft.com/fwlink/?linkid=2273506
+    Win25LofUrl    = 'https://go.microsoft.com/fwlink/?linkid=2273506'
+    Win25LofPath   = $DownloadsPath + "\26100.1.240331-1435.ge_release_amd64fre_SERVER_LOF_PACKAGES_OEM.iso"
 
     TransferType   = "SSH"
     # IP address of web server to transfer ISO to (via SSH)

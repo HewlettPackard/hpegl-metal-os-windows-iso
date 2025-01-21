@@ -1,4 +1,4 @@
-# (C) Copyright 2024 Hewlett Packard Enterprise Development LP
+# (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP
 
 # taken from https://blog.v12n.io/automating-the-installation-of-cloudbase-init-in-windows-templates-using-packer/
 # with some local modifications
@@ -106,8 +106,13 @@ Set-NetAdapterAdvancedProperty -Name "{{ $fabric }}.{{ .VID }}" -DisplayName "MA
   {{- end}}  {{/* end range .Connections  */}}
 {{- end}}    {{/* end if .Connections */}}
 
+# Enable OpenSSH through Firewall for Public and Private profiles (default is Private only)
+@'
+Set-NetFirewallRule -DisplayGroup "OpenSSH Server" -Profile "Public,Private"
+'@ | Out-File -Encoding Ascii -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\OpenSshFirewall.ps1"
+
 # Setting the CloudBase-Init service to Disabled so it will not run on future boots and reset settings that were
-# manually configured after boot, such as manually reset GreenlakeAdmin password
+# manually configured after boot, such as manually reset GreenLakeAdmin password
 @'
 Set-Service -Name cloudbase-init -StartupType Disabled
 '@ | Out-File -Encoding Ascii -FilePath "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\DisableCloudBaseInit.ps1"
