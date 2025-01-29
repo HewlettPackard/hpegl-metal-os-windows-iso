@@ -4,6 +4,7 @@
 
 # Table of contents
 * [Overview](#overview)
+* [Supported HPE PCE Bare Metal Operating Systems](#supported-hpe-pce-bare-metal-operating-systems)
 * [Windows Licensing](#windows-licensing)
 * [Building the Windows image](#building-the-windows-image)
   * [Setup PowerShell 7 and other tools](#setup-powershell-7-and-other-tools)
@@ -31,6 +32,15 @@ you can add your new service to the HPE Bare Metal Portal and deploy a host with
 
 Default parameters, such as Windows 2019, 2022 and 2025 source ISO locations and target web server information
 are specified in `Config\Config.ps1`. You should edit this file for your own environment.
+
+# Supported HPE PCE Bare Metal Operating Systems
+
+> [!IMPORTANT]  
+> **This BYOI Windows recipe has been validated with various versions of Microsoft Windows Server.**
+
+Service Category  | Service Flavor | Service Version 
+----------------- | -------------- | ----------------
+Microsoft Windows | Windows Server | 2019, 2022, 2025
 
 # Windows Licensing
 
@@ -115,9 +125,6 @@ and while you can download and use the Evaluation versions of each, you
 may have to add additional drivers for additional hardware support, especially
 after support may end from the older images. See the `Modules\Drivers.ps1` file
 for adding more drivers for either the Boot or Install image.
-
-This Windows test is working for the latest release of Windows Server 2019, 
-Windows Server 2022 and Windows Server 2025, as of the time of this writing: 2024-11-21
 
 ## Building the Bare Metal Windows image and service
 
