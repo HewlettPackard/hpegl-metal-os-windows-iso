@@ -42,6 +42,11 @@ Service Category  | Service Flavor | Service Version
 ----------------- | -------------- | ----------------
 Microsoft Windows | Windows Server | 2019, 2022, 2025
 
+> [!NOTE]
+> These instructions will configure the deployed Windows operating system with a Teaming configuation of
+> Switch Independent or active-backup, and no LAG configured on the switch. 802.3ad (LACP) is not currently
+> supported in HPE Bare Metal.
+
 # Windows Licensing
 
 > [!NOTE]
