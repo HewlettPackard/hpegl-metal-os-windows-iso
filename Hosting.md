@@ -1,8 +1,8 @@
-<!-- (C) Copyright 2024 Hewlett Packard Enterprise Development LP -->
+<!-- (C) Copyright 2024-2025 Hewlett Packard Enterprise Development LP -->
 
 # Requirements for Hosting BYOI files
 
-This file will describe some of the requirements enforced for the web server hosting the final BYOI ISO file
+This file describes some of the requirements enforced for the web server hosting the final BYOI ISO file.
 
 ## Secure Web Server
 
