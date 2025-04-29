@@ -95,7 +95,7 @@ These are the high-level steps required to use this built Bare Metal Windows ser
 
 These instructions are designed to run on a Windows System with PowerShell 7
 or later, and have been developed and tested on Windows 10 and 11, and should
-work on other Windows systems that ADK, and ADK-PE will install. To get this
+work on other Windows systems that ADK and ADK-PE will install. To get this
 working, the following is needed:
 
 * PowerShell 7 or later
@@ -103,7 +103,7 @@ working, the following is needed:
 * Windows ADK-PE
 
 The Windows host must have enough free file system space so that images can
-be easily generated,  (50-100GB).
+be easily generated, (50-100GB).
 
 The resulting Windows .ISO image file from the build needs to be uploaded
 to a web server that the HPE Bare Metal On-Premises Controller can access
@@ -355,7 +355,7 @@ These scripts support one of two ways of securing the default GreenLakeAdmin acc
 ## Modifying the Windows Autounattend XML file
 
 The Autounattend-XXXX.xml files are there to match whichever version of Windows you are trying to install. They share many things
-between the two of them, but more importantly, the differences are only in the variants between the two which are incompatible.
+among them, but more importantly, the differences are only in the variants among them that are incompatible.
 This is also an excellent file to modify for features that are desirable, or to enhance the existing process to conform to things
 your company may need.
 
