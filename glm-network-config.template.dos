@@ -24,7 +24,7 @@ config:
       bond-lacp-rate: false
       {{- $vlan_parent = .Name}}
 
-  {{- if and (gt .UntaggedNet.VID 0) (eq .UntaggedNet.NoIPAddr false) }}
+  {{- if gt .UntaggedNet.VID 0 }}
       {{- $net_zero := .UntaggedNet }}
       {{- $range_zero := index $net_zero.Ranges 0 }}
     subnets:
@@ -48,7 +48,6 @@ config:
     name: "{{$vlan_parent}}.{{.VID}}"
     vlan_link:  {{$vlan_parent}}
     vlan_id: {{.VID}}
-      {{- if eq .NoIPAddr false }}
       {{- $range_zero := index .Ranges 0}}
     subnets:
     - type: static
@@ -64,7 +63,6 @@ config:
             {{- end}}
           {{- end}}
         {{- end}}
-      {{- end}}  {{/* if eq .NoIPAddr false */}}
     {{- end}}  {{/* range .Networks */}}
   {{- end}}  {{/* if gt (len .Networks) 0 */}}
   {{- end}}  {{/* range .Connections  */}}
